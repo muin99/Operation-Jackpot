@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "Player.h"
+#include "Map.h"
 #include <GL/freeglut.h>
 #include <iostream>
 
@@ -7,6 +8,7 @@ int Game::width = 0;
 int Game::height = 0;
 Game::MenuState Game::menuState = Game::NONE;
 Player* Game::currentPlayer = nullptr;
+Map* Game::gameMap = nullptr;
 
 Game::Game(int w, int h, int argc, char** argv) {
     width = w;
@@ -47,6 +49,9 @@ void Game::display() {
         drawText(280, 325, "Joining Room...");
     }
     else if (menuState == PLAYING) {
+        if (gameMap != nullptr) {
+            gameMap->render();
+        }
         if (currentPlayer != nullptr) {
             currentPlayer->render();
         }
@@ -70,6 +75,9 @@ void Game::keyPressed(unsigned char key, int, int) {
             std::cout << "Join Room selected\n";
         }
         else if (key == 'c' || key == 'C') {
+            if (gameMap == nullptr) {
+                gameMap = new Map(width, height);
+            }
             if (currentPlayer == nullptr) {
                 currentPlayer = new Player(1, width/2, height/2);
             }

@@ -3,6 +3,7 @@
 #include <string>
 
 class Player;
+class Map;
 
 class Game {
 public:
@@ -18,6 +19,7 @@ public:
 
     static MenuState menuState;
     static Player* currentPlayer;
+    static Map* gameMap;
 
     Game(int w, int h, int argc, char** argv);
 
