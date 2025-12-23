@@ -20,6 +20,7 @@
 					<Add library="freeglut" />
 					<Add library="opengl32" />
 					<Add library="glu32" />
+					<Add library="winmm" />
 					<Add directory="../freeglut/lib/x64" />
 				</Linker>
 			</Target>
@@ -48,6 +49,8 @@
 		<Unit filename="include/Player.h" />
 		<Unit filename="src/Bullet.cpp" />
 		<Unit filename="include/Bullet.h" />
+		<Unit filename="src/Sound.cpp" />
+		<Unit filename="include/Sound.h" />
 		<Unit filename="src/Room.cpp" />
 		<Unit filename="include/Room.h" />
 		<Unit filename="src/Match.cpp" />

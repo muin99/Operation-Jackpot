@@ -4,6 +4,7 @@
 #include "Room.h"
 #include "Match.h"
 #include "Bullet.h"
+#include "Sound.h"
 #include <GL/freeglut.h>
 #include <iostream>
 #include <algorithm>
@@ -223,6 +224,9 @@ void Game::mouseClick(int button, int state, int x, int y) {
             // Create new bullet
             Bullet* newBullet = new Bullet(spawnX, spawnY, currentPlayer->angle, currentPlayer->id);
             bullets.push_back(newBullet);
+            
+            // Play gunshot sound
+            Sound::playGunshot();
             
             glutPostRedisplay();
         }

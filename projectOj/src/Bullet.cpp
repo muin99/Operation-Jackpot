@@ -51,20 +51,27 @@ void Bullet::update() {
 void Bullet::render() {
     if (!active) return;
     
+    // Calculate the angle of travel from velocity
+    float travelAngle = atan2(vy, vx);
+    
+    // Triangle size
+    float triangleSize = size * 1.5f;  // Make triangle slightly larger than the old circle
+    
     glColor3f(1.0f, 1.0f, 0.0f);  // Yellow color for bullets
-    glPointSize(size);
-    glBegin(GL_POINTS);
-    glVertex2f(x, y);
+    glPushMatrix();
+    glTranslatef(x, y, 0.0f);
+    glRotatef(travelAngle * 180.0f / 3.14159f, 0.0f, 0.0f, 1.0f);
+    
+    // Draw a sharp triangle pointing forward (in direction of travel)
+    glBegin(GL_TRIANGLES);
+    // Tip of triangle (pointing forward)
+    glVertex2f(triangleSize, 0.0f);
+    // Base vertices (back of triangle)
+    glVertex2f(-triangleSize / 2.0f, triangleSize / 2.0f);
+    glVertex2f(-triangleSize / 2.0f, -triangleSize / 2.0f);
     glEnd();
     
-    // Also draw a small circle for better visibility
-    glBegin(GL_TRIANGLE_FAN);
-    int segments = 8;
-    for (int i = 0; i <= segments; i++) {
-        float angle = 2.0f * 3.14159f * i / segments;
-        glVertex2f(x + cos(angle) * size / 2.0f, y + sin(angle) * size / 2.0f);
-    }
-    glEnd();
+    glPopMatrix();
 }
 
 bool Bullet::isOutOfBounds(int screenWidth, int screenHeight) {

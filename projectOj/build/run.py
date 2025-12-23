@@ -34,7 +34,7 @@ cmd = ["g++", "-I" + include_dir, *cpps, "-o", exe_path]
 
 # OS-specific link flags
 if system == "Windows":
-    cmd += ["-lfreeglut", "-lopengl32", "-lglu32", "-lgdi32"]
+    cmd += ["-lfreeglut", "-lopengl32", "-lglu32", "-lgdi32", "-lwinmm"]
 elif system == "Darwin":  # macOS
     # Try freeglut first (Homebrew), then fallback to system GLUT
     # You can swap -lfreeglut -> -lglut if you prefer system GLUT
