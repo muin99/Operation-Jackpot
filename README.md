@@ -194,9 +194,7 @@ brew install freeglut
 
 ## License
 
-[Add your license here]
 
 ## Contributors
 
-[Add contributors here]
 
