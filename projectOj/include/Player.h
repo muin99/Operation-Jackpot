@@ -1,6 +1,8 @@
 #pragma once
 #include <GL/freeglut.h>
 
+class Bullet;
+
 class Player {
 public:
     int id;
@@ -32,5 +34,9 @@ public:
     void handleSpecialKey(int key, bool pressed);
     void updateMovement();  // Process movement based on key states
     void updateAim(float mouseX, float mouseY);
+    void shoot(float mouseX, float mouseY);  // Shoot a bullet towards mouse position
     void render();
+    
+    // Get bullet spawn position (slightly in front of player)
+    void getBulletSpawnPosition(float& outX, float& outY);
 };

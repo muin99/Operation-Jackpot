@@ -7,6 +7,7 @@ class Player;
 class Map;
 class Room;
 class Match;
+class Bullet;
 
 class Game {
 public:
@@ -27,6 +28,11 @@ public:
     static Room* currentRoom;
     static Match* currentMatch;
     static std::vector<Room*> rooms;
+    static std::vector<Bullet*> bullets;  // All active bullets
+    
+    // Mouse position for crosshair
+    static float mouseX;
+    static float mouseY;
 
     Game(int w, int h, int argc, char** argv);
 
@@ -39,7 +45,11 @@ public:
     static void specialKeyPressed(int key, int x, int y);
     static void specialKeyUp(int key, int x, int y);
     static void mouseMotion(int x, int y);
+    static void mouseClick(int button, int state, int x, int y);
     static void drawText(float x, float y, const std::string& text);
+    static void drawCrosshair(float x, float y);
+    static void updateBullets();
+    static void cleanupBullets();
     
     static Room* createRoom(const std::string& roomName, int maxPlayers);
     static bool joinRoom(int roomId);

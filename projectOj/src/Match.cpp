@@ -17,7 +17,11 @@ Match::~Match() {
 
 void Match::start() {
     state = IN_PROGRESS;
-    // Initialize game map and players
+    // Initialize game map if not already set
+    if (gameMap == nullptr && sourceRoom != nullptr) {
+        // Map will be created by Game class before calling start()
+        // This is just a placeholder for future initialization
+    }
 }
 
 void Match::update() {

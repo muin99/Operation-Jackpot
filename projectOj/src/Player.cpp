@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "Bullet.h"
 #include <GL/freeglut.h>
 #include <cmath>
 
@@ -148,7 +149,17 @@ void Player::updateMovement() {
 void Player::updateAim(float mouseX, float mouseY) {
     float dx = mouseX - x;
     float dy = mouseY - y;
-    angle = atan2(dy, dx);
+    // atan2 returns angle from positive X axis (0 = right)
+    // Arrow points up at angle 0, so we need to subtract π/2 to align
+    angle = atan2(dy, dx) - 3.14159f / 2.0f;
+}
+
+void Player::getBulletSpawnPosition(float& outX, float& outY) {
+    // Spawn bullet slightly in front of the player (at the tip of the arrow)
+    float offset = size / 2.0f + 5.0f;  // 5 pixels beyond the arrow tip
+    float adjustedAngle = angle + 3.14159f / 2.0f;  // Convert back to standard angle
+    outX = x + cos(adjustedAngle) * offset;
+    outY = y + sin(adjustedAngle) * offset;
 }
 
 void Player::render() {

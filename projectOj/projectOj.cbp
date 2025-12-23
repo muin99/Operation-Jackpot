@@ -46,6 +46,8 @@
 		<Unit filename="include/Map.h" />
 		<Unit filename="src/Player.cpp" />
 		<Unit filename="include/Player.h" />
+		<Unit filename="src/Bullet.cpp" />
+		<Unit filename="include/Bullet.h" />
 		<Unit filename="src/Room.cpp" />
 		<Unit filename="include/Room.h" />
 		<Unit filename="src/Match.cpp" />
