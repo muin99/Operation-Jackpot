@@ -109,3 +109,32 @@
 	<GL/freeglut.h>
 	<cmath>
 
+1766498789 source:c:\users\56mui\downloads\game\operation-jackpot\projectoj\game.cpp
+	"Game.h"
+	"Player.h"
+	"Map.h"
+	<GL/freeglut.h>
+	<iostream>
+
+1766498789 c:\users\56mui\downloads\game\operation-jackpot\projectoj\game.h
+	<string>
+
+1766498789 c:\users\56mui\downloads\game\operation-jackpot\projectoj\player.h
+	<GL/freeglut.h>
+
+1766498789 c:\users\56mui\downloads\game\operation-jackpot\projectoj\map.h
+
+1766498789 source:c:\users\56mui\downloads\game\operation-jackpot\projectoj\main.cpp
+	<GL/freeglut.h>
+	"Game.h"
+
+1766498789 source:c:\users\56mui\downloads\game\operation-jackpot\projectoj\map.cpp
+	"Map.h"
+	<GL/freeglut.h>
+	<cmath>
+
+1766498789 source:c:\users\56mui\downloads\game\operation-jackpot\projectoj\player.cpp
+	"Player.h"
+	<GL/freeglut.h>
+	<cmath>
+

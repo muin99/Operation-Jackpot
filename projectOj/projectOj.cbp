@@ -13,6 +13,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
+					<Add directory="include" />
 					<Add directory="../freeglut/include" />
 				</Compiler>
 				<Linker>
@@ -39,20 +40,19 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="Game.cpp" />
-		<Unit filename="Game.h" />
-		<Unit filename="Map.cpp" />
-		<Unit filename="Map.h" />
-		<Unit filename="Player.cpp" />
-		<Unit filename="Player.h" />
-		<Unit filename="game.exe" />
-		<Unit filename="gunshot.mp3" />
-		<Unit filename="main.cpp" />
-		<Unit filename="project.layout" />
-		<Unit filename="projectOj.cbp" />
-		<Unit filename="projectOj.depend" />
-		<Unit filename="projectOj.layout" />
-		<Unit filename="run.py" />
+		<Unit filename="src/Game.cpp" />
+		<Unit filename="include/Game.h" />
+		<Unit filename="src/Map.cpp" />
+		<Unit filename="include/Map.h" />
+		<Unit filename="src/Player.cpp" />
+		<Unit filename="include/Player.h" />
+		<Unit filename="src/Room.cpp" />
+		<Unit filename="include/Room.h" />
+		<Unit filename="src/Match.cpp" />
+		<Unit filename="include/Match.h" />
+		<Unit filename="src/main.cpp" />
+		<Unit filename="assets/audio/gunshot.mp3" />
+		<Unit filename="build/run.py" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>
