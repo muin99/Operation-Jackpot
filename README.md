@@ -126,30 +126,20 @@ projectOj/
 
 ## Building the Project
 
-### Using CMake (Recommended)
-
-```bash
-mkdir build
-cd build
-cmake ..
-cmake --build .
-```
-
-The executable will be in `build/bin/Debug/`
-
-### Using Code::Blocks
-
-1. Open `projectOj.cbp` in Code::Blocks
-2. Build the project (F9)
-3. Run the project (F10)
-
-### Using Python Build Script
+### Using Python Build Script (Recommended)
 
 ```bash
 python build/run.py
 ```
 
 This will compile all source files and output to `bin/Debug/projectOj.exe`
+
+### Using Code::Blocks 
+
+1. Open `projectOj.cbp` in Code::Blocks
+2. Build the project (F9)
+3. Run the project (F10)
+
 
 ## Technology Stack
 
