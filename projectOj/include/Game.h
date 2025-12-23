@@ -30,9 +30,13 @@ public:
     static std::vector<Room*> rooms;
     static std::vector<Bullet*> bullets;  // All active bullets
     
-    // Mouse position for crosshair
+    // Mouse position for crosshair (screen coordinates)
     static float mouseX;
     static float mouseY;
+    
+    // Camera offset (for camera following player)
+    static float cameraX;
+    static float cameraY;
 
     Game(int w, int h, int argc, char** argv);
 

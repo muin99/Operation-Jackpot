@@ -20,6 +20,8 @@ std::vector<Room*> Game::rooms;
 std::vector<Bullet*> Game::bullets;
 float Game::mouseX = 0.0f;
 float Game::mouseY = 0.0f;
+float Game::cameraX = 0.0f;
+float Game::cameraY = 0.0f;
 
 Game::Game(int w, int h, int argc, char** argv) {
     width = w;
@@ -31,7 +33,7 @@ void Game::runOpenGl(int argc, char** argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
     glutInitWindowSize(width, height);
-    glutCreateWindow("2D Battle Royale");
+    glutCreateWindow("Operation Jackpot");
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -74,19 +76,48 @@ void Game::display() {
         }
     }
     else if (menuState == PLAYING) {
+        // Update camera to follow player (center player on screen)
+        if (currentPlayer != nullptr) {
+            // Camera offset is the player's position minus screen center
+            cameraX = currentPlayer->x - width / 2.0f;
+            cameraY = currentPlayer->y - height / 2.0f;
+        }
+        
+        // Apply camera transformation (translate world so player appears at center)
+        glPushMatrix();
+        glTranslatef(-cameraX, -cameraY, 0.0f);
+        
+        // Render map (will be offset by camera)
         if (gameMap != nullptr) {
             gameMap->render();
         }
-        if (currentPlayer != nullptr) {
-            currentPlayer->render();
-        }
-        // Render all bullets
+        
+        // Render all bullets (will be offset by camera)
         for (Bullet* bullet : bullets) {
             if (bullet != nullptr) {
                 bullet->render();
             }
         }
-        // Draw crosshair cursor
+        
+        // Render player at screen center (no camera offset)
+        glPopMatrix();
+        if (currentPlayer != nullptr) {
+            // Render player at fixed screen position (center)
+            glPushMatrix();
+            glTranslatef(width / 2.0f, height / 2.0f, 0.0f);
+            glRotatef(currentPlayer->angle * 180.0f / 3.14159f, 0.0f, 0.0f, 1.0f);
+            
+            glColor3f(0.0f, 0.0f, 1.0f);
+            glBegin(GL_TRIANGLES);
+            glVertex2f(0, currentPlayer->size / 2);
+            glVertex2f(-currentPlayer->size / 2, -currentPlayer->size / 2);
+            glVertex2f(currentPlayer->size / 2, -currentPlayer->size / 2);
+            glEnd();
+            
+            glPopMatrix();
+        }
+        
+        // Draw crosshair cursor at mouse position (screen coordinates, no camera offset)
         drawCrosshair(mouseX, mouseY);
     }
 
@@ -198,13 +229,19 @@ void Game::specialKeyUp(int key, int, int) {
 }
 
 void Game::mouseMotion(int x, int y) {
-    // Always update mouse position
+    // Always update mouse position (screen coordinates)
     mouseX = x;
     mouseY = height - y;  // Flip Y coordinate (GLUT has origin at top-left, OpenGL at bottom-left)
     
     if (menuState == PLAYING) {
         if (currentPlayer != nullptr) {
-            currentPlayer->updateAim(mouseX, mouseY);
+            // Convert screen mouse position to world coordinates for aiming
+            // Since player is at screen center, mouse position relative to center
+            // gives us the direction vector
+            float worldMouseX = currentPlayer->x + (mouseX - width / 2.0f);
+            float worldMouseY = currentPlayer->y + (mouseY - height / 2.0f);
+            
+            currentPlayer->updateAim(worldMouseX, worldMouseY);
             glutPostRedisplay();
         }
     }
@@ -213,11 +250,13 @@ void Game::mouseMotion(int x, int y) {
 void Game::mouseClick(int button, int state, int x, int y) {
     if (menuState == PLAYING && button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
         if (currentPlayer != nullptr) {
-            // Convert mouse coordinates
-            float mouseX = x;
-            float mouseY = height - y;
+            // Convert screen mouse coordinates to world coordinates
+            float screenMouseX = x;
+            float screenMouseY = height - y;
+            float worldMouseX = currentPlayer->x + (screenMouseX - width / 2.0f);
+            float worldMouseY = currentPlayer->y + (screenMouseY - height / 2.0f);
             
-            // Get bullet spawn position
+            // Get bullet spawn position (in world coordinates)
             float spawnX, spawnY;
             currentPlayer->getBulletSpawnPosition(spawnX, spawnY);
             
@@ -241,7 +280,7 @@ void Game::drawText(float x, float y, const std::string& text) {
 }
 
 void Game::drawCrosshair(float x, float y) {
-    float size = 15.0f;  // Size of crosshair lines
+    float size = 8.0f;  // Size of crosshair lines
     float thickness = 2.0f;  // Thickness of crosshair lines
     
     glColor3f(1.0f, 1.0f, 1.0f);  // White color

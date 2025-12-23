@@ -4,6 +4,33 @@ A 2D multiplayer battle royale game built with C++, OpenGL, and FreeGLUT.
 
 ## Game Concept
 
+**December, 2025.**  
+When history still breathes beneath the soil, a new war is born—not in blood, but in memory.
+
+In 1971, under moonless skies and guarded rivers, Operation Jackpot was whispered only to the brave. A covert strike. A handful of fighters. The Mukti Bahini moved like shadows, seizing enemy vessels from within occupied waters. Steel met silence. Fear changed sides. It was not just a battle—it was a declaration that resistance could not be drowned.
+
+More than five decades later, that spirit awakens again.
+
+From the echoes of that historic triumph rises a 2D battle royale, forged in December 2025—chosen not by chance, but by meaning. Every match is chaos. Every landing is a gamble. Every survivor carries the weight of those who once fought with nothing but courage and conviction.
+
+This is not just a game of last standing.  
+It is a tribute to defiance.  
+A reminder that even the smallest force, when united by purpose, can overturn the impossible.
+
+The battlefield is unforgiving. Alliances shatter. Silence kills. Victory belongs only to those who adapt, endure, and strike at the perfect moment—just like the operation that inspired it.
+
+Operation Jackpot is not about luck.  
+It is about timing.  
+It is about daring everything when history demands it.
+
+And when the final player stands alone, it will not merely be a win.
+
+**It will be a victory remembered.**
+
+---
+
+### Gameplay
+
 Operation Jackpot is a top-down 2D battle royale where players compete in an arena. Players spawn across the map, collect weapons and equipment, and fight until one player or team remains. The game features a shrinking safe zone that forces players into combat, creating intense multiplayer matches.
 
 **Core Features:**
