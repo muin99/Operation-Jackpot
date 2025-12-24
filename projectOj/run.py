@@ -9,38 +9,66 @@ def run(cmd):
     print(">", " ".join(cmd))
     return subprocess.call(cmd)
 
-# Get project root directory (where this script is located)
+# Get project root directory
 project_root = os.path.dirname(os.path.abspath(__file__))
 os.chdir(project_root)
 
-# Find all source files in src/
+# Find all source files
 src_dir = os.path.join(project_root, "src")
 cpps = sorted(glob.glob(os.path.join(src_dir, "*.cpp")))
 if not cpps:
     print("No .cpp files found in src/ directory.")
     sys.exit(1)
 
-system = platform.system()  # "Windows", "Darwin" (macOS), "Linux"
+system = platform.system()  # Windows, Darwin, Linux
 exe_name = "projectOj.exe" if system == "Windows" else "projectOj"
 
-# Create bin/Debug directory if it doesn't exist
+# Create bin/Debug directory
 bin_dir = os.path.join(project_root, "bin", "Debug")
 os.makedirs(bin_dir, exist_ok=True)
 exe_path = os.path.join(bin_dir, exe_name)
 
-# Base compile command with include directory
-include_dir = os.path.join(project_root, "include")
-cmd = ["g++", "-I" + include_dir, *cpps, "-o", exe_path]
+# Project include directory
+project_include = os.path.join(project_root, "include")
 
-# OS-specific link flags
+# Base compile command
+cmd = ["g++", "-std=c++17", "-I" + project_include]
+
+# 🔹 WINDOWS (MinGW + freeglut)
 if system == "Windows":
-    cmd += ["-lfreeglut", "-lopengl32", "-lglu32", "-lgdi32", "-lwinmm"]
-elif system == "Darwin":  # macOS
-    # Try freeglut first (Homebrew), then fallback to system GLUT
-    # You can swap -lfreeglut -> -lglut if you prefer system GLUT
-    cmd += ["-framework", "OpenGL", "-lfreeglut"]
-else:  # Linux
-    cmd += ["-lfreeglut", "-lGL", "-lGLU"]
+    # CHANGE THIS PATH if freeglut is installed elsewhere
+    FREEGLUT_ROOT = r"C:\freeglut"
+
+    cmd += [
+        "-I" + os.path.join(FREEGLUT_ROOT, "include"),
+        "-L" + os.path.join(FREEGLUT_ROOT, "lib"),
+        *cpps,
+        "-o", exe_path,
+        "-lfreeglut",
+        "-lopengl32",
+        "-lglu32",
+        "-lgdi32",
+        "-lwinmm",
+    ]
+
+# 🔹 macOS
+elif system == "Darwin":
+    cmd += [
+        *cpps,
+        "-o", exe_path,
+        "-framework", "OpenGL",
+        "-lfreeglut",
+    ]
+
+# 🔹 Linux
+else:
+    cmd += [
+        *cpps,
+        "-o", exe_path,
+        "-lfreeglut",
+        "-lGL",
+        "-lGLU",
+    ]
 
 # Build
 print(f"Building from {src_dir}...")
@@ -51,4 +79,3 @@ if rc != 0:
 # Run
 print(f"Running {exe_path}...")
 sys.exit(run([exe_path]))
-
