@@ -15,13 +15,16 @@
 					<Add option="-g" />
 					<Add directory="include" />
 					<Add directory="../freeglut/include" />
+					<Add directory="enet/include" />
 				</Compiler>
 				<Linker>
 					<Add library="freeglut" />
 					<Add library="opengl32" />
 					<Add library="glu32" />
 					<Add library="winmm" />
+					<Add library="enet64" />
 					<Add directory="../freeglut/lib/x64" />
+					<Add directory="enet" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -31,9 +34,19 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add directory="include" />
+					<Add directory="../freeglut/include" />
+					<Add directory="enet/include" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
+					<Add library="freeglut" />
+					<Add library="opengl32" />
+					<Add library="glu32" />
+					<Add library="winmm" />
+					<Add library="enet64" />
+					<Add directory="../freeglut/lib/x64" />
+					<Add directory="enet" />
 				</Linker>
 			</Target>
 		</Build>
@@ -55,6 +68,9 @@
 		<Unit filename="include/Room.h" />
 		<Unit filename="src/Match.cpp" />
 		<Unit filename="include/Match.h" />
+		<Unit filename="src/NetworkManager.cpp" />
+		<Unit filename="include/NetworkManager.h" />
+		<Unit filename="include/NetworkMessages.h" />
 		<Unit filename="src/main.cpp" />
 		<Unit filename="assets/audio/gunshot.mp3" />
 		<Unit filename="build/run.py" />
