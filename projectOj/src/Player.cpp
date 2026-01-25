@@ -10,6 +10,7 @@ Player::Player() {
     speed = 2.0f;  // Speed per update (updates ~60 times per second)
     size = 20.0f;
     angle = 0.0f;
+    isAlive = true;
     // Initialize key states
     for (int i = 0; i < 256; i++) {
         keys[i] = false;
@@ -27,6 +28,7 @@ Player::Player(int id, float x, float y) {
     speed = 2.0f;  // Speed per update (updates ~60 times per second)
     size = 20.0f;
     angle = 0.0f;
+    isAlive = true;
     // Initialize key states
     for (int i = 0; i < 256; i++) {
         keys[i] = false;
@@ -100,6 +102,8 @@ void Player::handleSpecialKey(int key, bool pressed) {
 }
 
 void Player::updateMovement() {
+    if (!isAlive) return;  // Dead players can't move
+    
     // Check WASD keys first
     bool w = keys['w'] || keys['W'];
     bool s = keys['s'] || keys['S'];
@@ -146,6 +150,110 @@ void Player::updateMovement() {
     }
 }
 
+bool Player::tryMoveTo(float newX, float newY, bool (*checkCollision)(float x, float y, float radius)) {
+    if (checkCollision == nullptr) {
+        x = newX;
+        y = newY;
+        return true;
+    }
+    
+    if (!checkCollision(newX, newY, size / 2.0f)) {
+        x = newX;
+        y = newY;
+        return true;
+    }
+    return false;
+}
+
+void Player::updateMovementWithCollision(bool (*checkCollision)(float x, float y, float radius)) {
+    if (!isAlive) return;
+    
+    float oldX = x;
+    float oldY = y;
+    
+    // Check WASD keys first
+    bool w = keys['w'] || keys['W'];
+    bool s = keys['s'] || keys['S'];
+    bool a = keys['a'] || keys['A'];
+    bool d = keys['d'] || keys['D'];
+    
+    // Check arrow keys
+    bool up = keyUp;
+    bool down = keyDown;
+    bool left = keyLeft;
+    bool right = keyRight;
+    
+    bool shouldMoveUp = up || w;
+    bool shouldMoveDown = down || s;
+    bool shouldMoveLeft = left || a;
+    bool shouldMoveRight = right || d;
+    
+    // Calculate desired movement
+    float deltaX = 0.0f;
+    float deltaY = 0.0f;
+    
+    // Handle diagonal movement first
+    if (shouldMoveUp && shouldMoveRight) {
+        float diagonalSpeed = speed * 0.707f;
+        deltaX = diagonalSpeed;
+        deltaY = diagonalSpeed;
+    }
+    else if (shouldMoveUp && shouldMoveLeft) {
+        float diagonalSpeed = speed * 0.707f;
+        deltaX = -diagonalSpeed;
+        deltaY = diagonalSpeed;
+    }
+    else if (shouldMoveDown && shouldMoveLeft) {
+        float diagonalSpeed = speed * 0.707f;
+        deltaX = -diagonalSpeed;
+        deltaY = -diagonalSpeed;
+    }
+    else if (shouldMoveDown && shouldMoveRight) {
+        float diagonalSpeed = speed * 0.707f;
+        deltaX = diagonalSpeed;
+        deltaY = -diagonalSpeed;
+    }
+    // Handle single-axis movement
+    else {
+        if (shouldMoveUp) {
+            deltaY = speed;
+        }
+        if (shouldMoveDown) {
+            deltaY = -speed;
+        }
+        if (shouldMoveLeft) {
+            deltaX = -speed;
+        }
+        if (shouldMoveRight) {
+            deltaX = speed;
+        }
+    }
+    
+    // Try to move with collision detection
+    float newX = x + deltaX;
+    float newY = y + deltaY;
+    
+    // Try full movement first (diagonal or single-axis)
+    if (deltaX != 0.0f || deltaY != 0.0f) {
+        if (tryMoveTo(newX, newY, checkCollision)) {
+            // Movement successful
+            return;
+        }
+        
+        // If diagonal movement failed, try single-axis movement
+        if (deltaX != 0.0f && deltaY != 0.0f) {
+            // Try X-axis only
+            if (tryMoveTo(x + deltaX, y, checkCollision)) {
+                return;
+            }
+            // Try Y-axis only
+            if (tryMoveTo(x, y + deltaY, checkCollision)) {
+                return;
+            }
+        }
+    }
+}
+
 void Player::updateAim(float mouseX, float mouseY) {
     float dx = mouseX - x;
     float dy = mouseY - y;
@@ -163,6 +271,8 @@ void Player::getBulletSpawnPosition(float& outX, float& outY) {
 }
 
 void Player::render() {
+    if (!isAlive) return;  // Don't render dead players
+    
     glPushMatrix();
     glTranslatef(x, y, 0.0f);
     glRotatef(angle * 180.0f / 3.14159f, 0.0f, 0.0f, 1.0f);
@@ -175,4 +285,8 @@ void Player::render() {
     glEnd();
     
     glPopMatrix();
+}
+
+void Player::eliminate() {
+    isAlive = false;
 }

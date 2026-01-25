@@ -10,6 +10,7 @@ public:
     float speed;
     float size;
     float angle;
+    bool isAlive;  // Whether player is still alive
 
     // Key state tracking for diagonal movement
     bool keys[256];
@@ -33,10 +34,15 @@ public:
     void handleKey(unsigned char key, bool pressed);
     void handleSpecialKey(int key, bool pressed);
     void updateMovement();  // Process movement based on key states
+    void updateMovementWithCollision(bool (*checkCollision)(float x, float y, float radius));  // Movement with collision check
     void updateAim(float mouseX, float mouseY);
     void shoot(float mouseX, float mouseY);  // Shoot a bullet towards mouse position
     void render();
+    void eliminate();  // Mark player as eliminated
     
     // Get bullet spawn position (slightly in front of player)
     void getBulletSpawnPosition(float& outX, float& outY);
+    
+    // Movement helpers that check collision
+    bool tryMoveTo(float newX, float newY, bool (*checkCollision)(float x, float y, float radius));
 };
