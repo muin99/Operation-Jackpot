@@ -1,41 +1,54 @@
 #include "Map.h"
 #include <GL/freeglut.h>
 #include <cmath>
-#include <algorithm>
 
 Map::Map(float w, float h) {
     width = w;
     height = h;
-    initializeObstacles();
+    initializeMap();
 }
 
-void Map::initializeObstacles() {
-    rectObstacles.clear();
-    polygonObstacles.clear();
+void Map::initializeMap() {
+    collisionRects.clear();
     
-    // Simple border walls
+    // Add collision rectangles for borders
     float borderSize = 20.0f;
-    addObstacle(0, borderSize, height, 0);  // Left wall
-    addObstacle(width - borderSize, width, height, 0);  // Right wall
-    addObstacle(0, width, borderSize, 0);  // Bottom wall
-    addObstacle(0, width, height, height - borderSize);  // Top wall
+    collisionRects.push_back(Rect(0, borderSize, height, 0));  // Left wall
+    collisionRects.push_back(Rect(width - borderSize, width, height, 0));  // Right wall
+    collisionRects.push_back(Rect(0, width, borderSize, 0));  // Bottom wall
+    collisionRects.push_back(Rect(0, width, height, height - borderSize));  // Top wall
     
-    // ============================================
-    // MAP DESIGN - Simple approach
-    // ============================================
-    // Add rectangles: addObstacle(left, right, top, bottom)
-    // Add polygons: addTriangle(x1, y1, x2, y2, x3, y3)
-    //              or addQuad(x1, y1, x2, y2, x3, y3, x4, y4)
-    // ============================================
+    // Add collision rectangles for obstacles
+    // IMPORTANT: These must match the obstacles you draw in render()!
+    // For each obstacle in render(), add a corresponding collision rect here
     
-    // Example rectangles
-    addObstacle(100, 200, 150, 100);
-    addObstacle(300, 400, 200, 150);
-    addObstacle(500, 600, 250, 200);
+    // Obstacle 1: Center at (150, 125), Size 100x50
+    collisionRects.push_back(Rect(100, 200, 150, 100));
     
-    // Example polygons
-    addTriangle(200, 300, 250, 250, 300, 300);  // Triangle
-    addQuad(400, 400, 500, 400, 500, 500, 400, 500);  // Quad
+    // Obstacle 2: Center at (350, 175), Size 100x50, Rotated 45 degrees
+    // For rotated rectangles, use a bounding box that covers the rotation
+    float rotSize = 100.0f * 1.414f;  // Diagonal of 100x50 rectangle
+    collisionRects.push_back(Rect(350 - rotSize/2, 350 + rotSize/2, 175 + rotSize/2, 175 - rotSize/2));
+    
+    // Obstacle 3: Center at (550, 225), Size 100x50
+    collisionRects.push_back(Rect(500, 600, 250, 200));
+    
+    // Obstacle 4: Center at (250, 375), Size 80x80, Rotated 30 degrees
+    float rotSize2 = 80.0f * 1.414f;
+    collisionRects.push_back(Rect(250 - rotSize2/2, 250 + rotSize2/2, 375 + rotSize2/2, 375 - rotSize2/2));
+    
+    // Obstacle 5: Center at (500, 425), Size 120x40
+    collisionRects.push_back(Rect(440, 560, 445, 405));
+}
+
+// Helper function to draw a unit square (centered at origin, size 1x1)
+void drawUnitSquare() {
+    glBegin(GL_QUADS);
+        glVertex2f(-0.5f, -0.5f);
+        glVertex2f( 0.5f, -0.5f);
+        glVertex2f( 0.5f,  0.5f);
+        glVertex2f(-0.5f,  0.5f);
+    glEnd();
 }
 
 void Map::render() {
@@ -48,54 +61,99 @@ void Map::render() {
     glVertex2f(0, height);
     glEnd();
     
-    // Draw rectangle obstacles
-    for (const Rect& obstacle : rectObstacles) {
-        obstacle.draw(0.5f, 0.3f, 0.1f);  // Brown color
-    }
+    // ============================================
+    // DRAW MAP OBSTACLES HERE
+    // Use glPushMatrix, glTranslatef, glRotatef, glScalef, glPopMatrix
+    // ============================================
     
-    // Draw polygon obstacles
-    for (const MapPolygon& obstacle : polygonObstacles) {
-        obstacle.draw(0.5f, 0.3f, 0.1f);  // Brown color
-    }
+    // Border walls
+    float borderSize = 20.0f;
+    
+    // Left wall
+    glPushMatrix();
+        glTranslatef(borderSize / 2.0f, height / 2.0f, 0.0f);
+        glScalef(borderSize, height, 1.0f);
+        glColor3f(0.5f, 0.3f, 0.1f);  // Brown
+        drawUnitSquare();
+    glPopMatrix();
+    
+    // Right wall
+    glPushMatrix();
+        glTranslatef(width - borderSize / 2.0f, height / 2.0f, 0.0f);
+        glScalef(borderSize, height, 1.0f);
+        glColor3f(0.5f, 0.3f, 0.1f);  // Brown
+        drawUnitSquare();
+    glPopMatrix();
+    
+    // Bottom wall
+    glPushMatrix();
+        glTranslatef(width / 2.0f, borderSize / 2.0f, 0.0f);
+        glScalef(width, borderSize, 1.0f);
+        glColor3f(0.5f, 0.3f, 0.1f);  // Brown
+        drawUnitSquare();
+    glPopMatrix();
+    
+    // Top wall
+    glPushMatrix();
+        glTranslatef(width / 2.0f, height - borderSize / 2.0f, 0.0f);
+        glScalef(width, borderSize, 1.0f);
+        glColor3f(0.5f, 0.3f, 0.1f);  // Brown
+        drawUnitSquare();
+    glPopMatrix();
+    
+    // Example obstacle 1 - Simple rectangle
+    glPushMatrix();
+        glTranslatef(150.0f, 125.0f, 0.0f);  // Center at (150, 125)
+        glScalef(100.0f, 50.0f, 1.0f);       // Size: 100x50
+        glColor3f(0.9f, 0.0f, 0.0f);        // Red
+        drawUnitSquare();
+    glPopMatrix();
+    
+    // Example obstacle 2 - Rotated rectangle
+    glPushMatrix();
+        glTranslatef(350.0f, 175.0f, 0.0f);  // Center at (350, 175)
+        glRotatef(45.0f, 0.0f, 0.0f, 1.0f);   // Rotate 45 degrees
+        glScalef(100.0f, 50.0f, 1.0f);        // Size: 100x50
+        glColor3f(0.0f, 0.9f, 0.0f);          // Green
+        drawUnitSquare();
+    glPopMatrix();
+    
+    // Example obstacle 3 - Scaled rectangle
+    glPushMatrix();
+        glTranslatef(550.0f, 225.0f, 0.0f);   // Center at (550, 225)
+        glScalef(100.0f, 50.0f, 1.0f);        // Size: 100x50
+        glColor3f(0.0f, 0.0f, 0.9f);          // Blue
+        drawUnitSquare();
+    glPopMatrix();
+    
+    // Example obstacle 4 - Combined transformations
+    glPushMatrix();
+        glTranslatef(250.0f, 375.0f, 0.0f);   // Translate first
+        glRotatef(30.0f, 0.0f, 0.0f, 1.0f);   // Then rotate
+        glScalef(80.0f, 80.0f, 1.0f);          // Then scale
+        glColor3f(0.9f, 0.9f, 0.0f);         // Yellow
+        drawUnitSquare();
+    glPopMatrix();
+    
+    // Example obstacle 5 - Different scale on X and Y
+    glPushMatrix();
+        glTranslatef(500.0f, 425.0f, 0.0f);
+        glScalef(120.0f, 40.0f, 1.0f);        // Wide rectangle
+        glColor3f(0.9f, 0.0f, 0.9f);          // Magenta
+        drawUnitSquare();
+    glPopMatrix();
+    
+    // ============================================
+    // ADD MORE OBSTACLES HERE USING TRANSFORMATIONS
+    // ============================================
 }
 
 bool Map::checkCollision(float x, float y, float radius) const {
-    // Check rectangle obstacles
-    for (const Rect& obstacle : rectObstacles) {
-        if (obstacle.checkCircleCollision(x, y, radius)) {
+    for (const Rect& rect : collisionRects) {
+        if (rect.checkCircleCollision(x, y, radius)) {
             return true;
         }
     }
-    
-    // Check polygon obstacles
-    for (const MapPolygon& obstacle : polygonObstacles) {
-        if (obstacle.checkCircleCollision(x, y, radius)) {
-            return true;
-        }
-    }
-    
-    return false;
-}
-
-bool Map::checkCollision(const Rect& rect) const {
-    // Check rectangle obstacles
-    for (const Rect& obstacle : rectObstacles) {
-        if (obstacle.checkCollision(rect)) {
-            return true;
-        }
-    }
-    
-    // Check polygon obstacles (convert rect to circle check at center)
-    float centerX = (rect.left + rect.right) / 2.0f;
-    float centerY = (rect.top + rect.bottom) / 2.0f;
-    float radius = std::max((rect.right - rect.left) / 2.0f, (rect.top - rect.bottom) / 2.0f);
-    
-    for (const MapPolygon& obstacle : polygonObstacles) {
-        if (obstacle.checkCircleCollision(centerX, centerY, radius)) {
-            return true;
-        }
-    }
-    
     return false;
 }
 
@@ -108,33 +166,4 @@ bool Map::isValidSpawnPosition(float x, float y, float radius) const {
     
     // Check collision
     return !checkCollision(x, y, radius);
-}
-
-void Map::addObstacle(float left, float right, float top, float bottom) {
-    rectObstacles.push_back(Rect(left, right, top, bottom));
-}
-
-void Map::addObstacle(const Rect& rect) {
-    rectObstacles.push_back(rect);
-}
-
-void Map::addPolygon(const MapPolygon& polygon) {
-    polygonObstacles.push_back(polygon);
-}
-
-void Map::addTriangle(float x1, float y1, float x2, float y2, float x3, float y3) {
-    MapPolygon triangle;
-    triangle.addVertex(x1, y1);
-    triangle.addVertex(x2, y2);
-    triangle.addVertex(x3, y3);
-    polygonObstacles.push_back(triangle);
-}
-
-void Map::addQuad(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4) {
-    MapPolygon quad;
-    quad.addVertex(x1, y1);
-    quad.addVertex(x2, y2);
-    quad.addVertex(x3, y3);
-    quad.addVertex(x4, y4);
-    polygonObstacles.push_back(quad);
 }
